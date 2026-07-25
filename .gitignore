@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Pipenv
+Pipfile.lock
+
+# VS Code
+.vscode/
+
+# Environment variables
+.env
+
+# Database
+*.db
+*.sqlite3
+
+# macOS
+.DS_Store
