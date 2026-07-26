@@ -41,6 +41,11 @@ def index():
 @app.route('/workouts', methods=['GET'])
 def list_workouts():
     workouts = Workout.query.all()
+
+    print("Workout count:", len(workouts))
+    for w in workouts:
+        print(w.id, w.notes)
+
     return jsonify({"workouts": workout_list_schema.dump(workouts)}), 200
 
 # Show single workout with specific id
@@ -60,6 +65,9 @@ def create_workout():
     db.session.commit()
     return jsonify({"workout": workout_schema.dump(workout)}), 201
 
+
+    
+
 # List all exercises
 @app.route('/exercises', methods=['GET'])
 def list_exercises():
@@ -77,39 +85,43 @@ def show_exercise(exercise_id):
 # Create an exercise
 @app.route('/exercises', methods=['POST'])
 def create_exercise():
-    data = request.get_json() or {}
-    exercise = exercise_schema.load(data)
-    db.session.add(exercise)
-    db.session.commit()
-    return jsonify({"exercise": exercise_schema.dump(exercise)}), 201
+    try:
+        data = request.get_json() or {}
+        exercise = exercise_schema.load(data)
 
+        db.session.add(exercise)
+        db.session.commit()
+
+        return jsonify({"exercise": exercise_schema.dump(exercise)}), 201
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
 # Add an exercise to a workout, including reps/sets/duration
-@app.route('/workouts/<int:workout_id>/exercises', methods=['POST'])
-def add_exercise_to_workout(workout_id):
+@app.route('/workouts/<int:workout_id>/exercises/<int:exercise_id>/workout_exercises', methods=['POST'])
+def add_exercise_to_workout(workout_id, exercise_id):
     workout = Workout.query.get(workout_id)
-    if not workout:
-        return jsonify({"error": "Workout not found"}), 404
+    exercise = Exercise.query.get(exercise_id)
+
+    if not workout or not exercise:
+        return jsonify({"error": "Workout or exercise not found"}), 404
 
     data = request.get_json() or {}
-    exercise = Exercise.query.get(data.get('exercise_id'))
-    if not exercise:
-        return jsonify({"error": "Exercise not found"}), 404
 
-    validated = workout_exercises_schema.load({
-        "workout_id": workout.id,
-        "exercise_id": exercise.id,
-        "reps": data.get('reps'),
-        "sets": data.get('sets'),
-        "duration_seconds": data.get('duration_seconds'),
-    })
-    validated.workout = workout
-    validated.exercise = exercise
-    db.session.add(validated)
+    workout_exercise = WorkoutExercises(
+        workout_id=workout_id,
+        exercise_id=exercise_id,
+        sets=data.get("sets"),
+        reps=data.get("reps"),
+        duration_seconds=data.get("duration_seconds")
+    )
+
+    db.session.add(workout_exercise)
     db.session.commit()
-    return jsonify({"workout_exercise": workout_exercises_schema.dump(validated)}), 201
 
-
-
+    return jsonify({
+        "message": "Exercise added to workout"
+    }), 201
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

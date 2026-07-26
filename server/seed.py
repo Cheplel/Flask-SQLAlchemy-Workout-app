@@ -58,4 +58,69 @@ with app.app_context():
     db.session.add_all([workout_exercise_1, workout_exercise_2, workout_exercise_3, workout_exercise_4])
     db.session.commit()
 
+    #Create another workout with different exercises
+    workout2 = Workout(date=date.today(), duration=30, notes='Cardio and strength')
+    db.session.add(workout2)
+    db.session.commit()
+
+    workout_exercise_5 = WorkoutExercises(
+        workout=workout2,
+        exercise=pushups,
+        reps=15,
+        sets=3,
+        duration_seconds=20,
+    )
+
+    workout_exercise_6 = WorkoutExercises(
+        workout=workout2,
+        exercise=squats,
+        reps=20,
+        sets=3,
+        duration_seconds=20,
+    )
+
+    workout_exercise_7 = WorkoutExercises(
+        workout=workout2,
+        exercise=deadlift,
+        reps=10,
+        sets=3,
+        duration_seconds=60,
+    )
+
+    workout_exercise_8 = WorkoutExercises(
+        workout=workout2,
+        exercise=running,
+        reps=13,
+        sets=2,
+        duration_seconds=1200,
+    )
+
+    db.session.add_all([workout_exercise_5, workout_exercise_6, workout_exercise_7, workout_exercise_8])
+    db.session.commit()
+
+    #Create a third workout with different exercises
+    workout3 = Workout(date=date.today(), duration=50, notes='Strength and cardio')
+    db.session.add(workout3)
+    db.session.commit()
+
+    workout_exercise_9 = WorkoutExercises(
+        workout=workout3,
+        exercise=pushups,
+        reps=15,
+        sets=3,
+        duration_seconds=20,
+    )
+
+    workout_exercise_10 = WorkoutExercises(
+        workout=workout3,
+        exercise=squats,
+        reps=20,
+        sets=3,
+        duration_seconds=20,
+    )
+
+    db.session.add_all([workout_exercise_9, workout_exercise_10])
+    db.session.commit()
+
     print('Seed data created successfully.')
+    print('Workout count:', Workout.query.count())
