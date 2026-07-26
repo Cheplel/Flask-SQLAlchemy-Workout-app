@@ -2,16 +2,22 @@ from flask import Flask, jsonify, request
 from flask_migrate import Migrate
 from marshmallow import ValidationError
 
-from server.models import db, Exercise, Workout, WorkoutExercises
-from server.schemas import ExerciseSchema, WorkoutSchema, WorkoutExercisesSchema
+# Support running as package (`python -m server.app`) and as script (`python server/app.py`).
+try:
+    from server.models import db, Exercise, Workout, WorkoutExercises
+    from server.schemas import ExerciseSchema, WorkoutSchema, WorkoutExercisesSchema
+except Exception:
+    # fallback to local imports when running the script directly
+    from models import db, Exercise, Workout, WorkoutExercises
+    from schemas import ExerciseSchema, WorkoutSchema, WorkoutExercisesSchema
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+# Use the absolute instance DB file path so the app always opens the seeded file.
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/Dell/Desktop/Flask SQLAlchemy Workout app/instance/app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-migrate = Migrate(app, db)
-
 db.init_app(app)
+migrate = Migrate(app, db)
 
 exercise_schema = ExerciseSchema()
 exercise_list_schema = ExerciseSchema(many=True)

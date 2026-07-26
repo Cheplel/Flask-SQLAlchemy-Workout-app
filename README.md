@@ -122,11 +122,19 @@ flask-sqlalchemy-workout-app/
 
 ## Testing
 
-Run all tests using:
 
-```bash
-pytest
-```
+After starting the Flask server:
+
+bash
+flask run
+
+
+Use Thunder Client (VS Code extension) or Postman to test the API endpoints.
+
+Example:
+
+GET http://127.0.0.1:5000/workouts
+POST http://127.0.0.1:5000/exercises
 
 ## Author
 Jean Koech
