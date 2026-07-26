@@ -12,7 +12,7 @@ class Exercise(db.Model):
 
     @validates('category')
     def validate_category(self, key, value):
-        allowed_categories = ['Cardio', 'Strength', 'Flexibility', 'Balance']
+        allowed_categories = ['Chest', 'Legs', 'Back', 'Cardio']
         if value not in allowed_categories:
             raise ValueError(f"Category must be one of {allowed_categories}.")
         return value
